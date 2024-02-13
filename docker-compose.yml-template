@@ -1,0 +1,31 @@
+version: '2'
+services:
+  inotify:
+    ##################################################
+    # BUILD section
+    ##################################################
+    build:
+      context: ./build
+      dockerfile: Dockerfile
+      x-bake:
+        platforms:
+          - linux/amd64
+          - linux/arm64
+    ##################################################
+    # RUN section
+    ##################################################
+    image: unimock/inotify-docker:0.0.0
+    container_name: scanner
+    restart: unless-stopped
+    network_mode: bridge
+    volumes:
+      - /cust/Scanner/Fax:/fax
+      - /cust/Scanner/Drucker:/print
+      - /cust/Fibu:/fibu
+      - ./service:/service 
+    environment:
+      - VOLUMES=/fax /print /fibu
+      - COMMAND=/service/script.bash
+      - EVENTS=create
+      #- OPTIONS='--monitor'
+      
